@@ -1,0 +1,133 @@
+import sys
+import re
+from smtplib import SMTP
+from typing import Optional
+from cryptography.fernet import Fernet
+from dotenv import dotenv_values
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+# from email import encoders
+
+
+CONFIG = dotenv_values(".env")
+KEY = CONFIG["KEY"]
+FROM_ADDR = str(CONFIG["EMAIL"])
+PORT = 587
+SMTP_SERVER = "smtp.office365.com"
+
+
+class Email:
+    """
+    Need to come back to this
+    """
+    ...
+
+
+class Server(SMTP):
+    connected = False
+    def __init__(self, host, port_number) -> None:
+        super().__init__(host, port_number)
+        self.host = host
+        self.port = port_number
+
+    def __str__(self) -> str:
+        return f"{self.host} server"
+
+    def make_connection(self, user) -> None:
+        """
+        Makes connection to the server
+        """
+        self.starttls()
+        self.ehlo()
+        self.login(user.email, user.password)
+        self.connected = True
+
+    def send_email(self, from_address, to_address, message) -> bool:
+        """
+        Sends an email
+        """
+        for address in [from_address, to_address]:
+            if not self.validate_email(address):
+                return False
+        
+        # We need to send the mail here...
+        if self.connected:
+            self.sendmail(from_address, to_address, message.as_string())
+            self.quit()
+            self.connected = False
+            return True
+        return False
+
+    @classmethod
+    def validate_email(self, email_address) -> bool:
+        regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
+        return True if re.fullmatch(regex, email_address) else False
+
+
+class User:
+    def __init__(self, email, password) -> None:
+        self._email = email
+        self._password = password
+
+    def __str__(self) -> str:
+        return f"User: {self.email}"
+
+    @property
+    def email(self) -> str:
+        return self._email
+
+    @property
+    def password(self) -> str:
+        return self._password
+    
+    def construct_email(self, to_address, body, subject) -> MIMEBase:
+        """
+        Constructs an email
+        For now we will only send text emails
+        Later we will add attachment perhaps an email class will be needed
+        """
+        message = MIMEMultipart()
+        message["From"] = self.email
+        message["To"] = to_address
+        message["Subject"] = subject
+        message.attach(MIMEText(body, "plain"))
+        return message
+        
+    
+def main():
+    if len(sys.argv) != 2:
+        sys.exit("Usage: python3 smtp.py recieving_address")
+
+    to_addr = sys.argv[1]
+
+    if not Server.validate_email(to_addr):
+        sys.exit("Invalid email")
+
+    password = get_password("credentials.txt", KEY)
+
+    user = User(FROM_ADDR, password)
+    server = Server(SMTP_SERVER, PORT)
+    server.make_connection(user)
+
+    subject = input("Subject: ")
+    body = input("Body: ")
+
+    message = user.construct_email(to_addr, body, subject)
+    server.send_email(user.email, to_addr, message)
+
+
+def get_password(file: str, key: str) -> str:
+    """
+    Returns decrypted password
+    """
+    f = open(file)
+    password = f.readline().strip()
+    f.close()
+    fernet = Fernet(key.encode())
+    password = fernet.decrypt(password.encode()).decode("utf-8")
+    return password
+
+
+if __name__ == "__main__":
+    main()
