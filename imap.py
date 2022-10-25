@@ -62,7 +62,7 @@ class EmailReader(IMAP4_SSL):
         Adds an email to the ignore list
         """
         self.ignore_list.append(email_address)
-        
+
 
 
         

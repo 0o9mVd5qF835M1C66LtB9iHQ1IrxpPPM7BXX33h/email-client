@@ -14,7 +14,7 @@ CONFIG = dotenv_values(".env")
 KEY = CONFIG["KEY"]
 FROM_ADDR = str(CONFIG["EMAIL"])
 PORT = 587
-SMTP_SERVER = "smtp.office365.com"
+SMTP_SERVER = CONFIG["SMTP_SERVER"]
 
 
 class Email:
