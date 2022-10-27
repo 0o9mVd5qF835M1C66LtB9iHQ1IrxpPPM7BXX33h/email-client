@@ -1,7 +1,6 @@
 import sys
 import re
 from smtplib import SMTP
-from typing import Optional
 from cryptography.fernet import Fernet
 from dotenv import dotenv_values
 from email.mime.multipart import MIMEMultipart
