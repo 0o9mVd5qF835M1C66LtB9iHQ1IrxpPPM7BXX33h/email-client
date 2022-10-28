@@ -5,7 +5,7 @@ from cryptography.fernet import Fernet
 from dotenv import dotenv_values
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
+# from email.mime.base import MIMEBase
 # from email import encoders
 
 
@@ -14,6 +14,8 @@ KEY = CONFIG["KEY"]
 FROM_ADDR = str(CONFIG["EMAIL"])
 PORT = 587
 SMTP_SERVER = CONFIG["SMTP_SERVER"]
+IMAP_SERVER = CONFIG["IMAP_SERVER"]
+IMAP_PORT = CONFIG["IMAP_PORT"]
 
 
 class Email:
@@ -25,7 +27,7 @@ class Email:
 
 class Server(SMTP):
     connected = False
-    def __init__(self, host, port_number) -> None:
+    def __init__(self, host: str, port_number: int) -> None:
         super().__init__(host, port_number)
         self.host = host
         self.port = port_number
@@ -42,7 +44,7 @@ class Server(SMTP):
         self.login(user.email, user.password)
         self.connected = True
 
-    def send_email(self, from_address, to_address, message) -> bool:
+    def send_email(self, from_address: str, to_address: str, message: MIMEMultipart) -> bool:
         """
         Sends an email
         """
@@ -80,7 +82,7 @@ class User:
     def password(self) -> str:
         return self._password
     
-    def construct_email(self, to_address, body, subject) -> MIMEBase:
+    def construct_email(self, to_address, body, subject) -> MIMEMultipart:
         """
         Constructs an email
         For now we will only send text emails
