@@ -1,7 +1,7 @@
 from imaplib import IMAP4_SSL
 import email
 # Just need this import for testing will likely remove later
-from smtp import User, get_password, KEY, FROM_ADDR, PORT
+from smtp import User, get_password, CONFIG
 
 
 # TODO: Figure out how to deal with files
@@ -58,7 +58,7 @@ class EmailReader(IMAP4_SSL):
                 }
             )
             emails.append(mail)
-        return emails
+        return emails[:amount]
     
 
     def add_to_ignore_list(self, email_address: str) -> None:
@@ -78,8 +78,8 @@ class EmailReader(IMAP4_SSL):
 
 
 def main():
-    password = get_password("credentials.txt", KEY)
-    user = User(FROM_ADDR, password)
+    password = get_password("credentials.txt", CONFIG["KEY"])
+    user = User(CONFIG["EMAIL"], password)
     server = EmailReader("outlook.office365.com", 993)
     server.log_in(user)
     server.ignore_list_setter()
@@ -89,6 +89,7 @@ def main():
         print(email["subject"])
         print(email["body"])
         print()
+
 
 if __name__ == "__main__":
     main()
