@@ -98,7 +98,9 @@ class PopUp:
         self.window.grab_set()
         self.window.focus_set()
         self.window.transient(self.master)
-
+        # Make window center of main window
+        self.window.geometry("+%d+%d" % (self.master.winfo_rootx() + 50, self.master.winfo_rooty() + 50))
+        
         self.message = message
         self.message_label = Label(self.window, text=self.message).pack(padx=10, pady=10)
         self.ok_button = Button(self.window, text="OK", command=self.window.destroy).pack(pady=10)
@@ -114,5 +116,6 @@ class App:
 if __name__ == "__main__":
     root = Tk()
     root.title("Email Client")
+    root.resizable(False, False)
     App(root)
     root.mainloop()
