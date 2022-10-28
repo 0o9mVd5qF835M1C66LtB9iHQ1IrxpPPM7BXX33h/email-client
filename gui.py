@@ -1,4 +1,5 @@
 from tkinter import *
+from typing import Any
 from smtp import (
     Server,
     User,
@@ -8,7 +9,7 @@ from smtp import (
 
 
 class LogInFrame:
-    def __init__(self, master):
+    def __init__(self, master: Any) -> None:
         self.master = master
         self.frame = Frame(self.master, width=800, height=800, padx=80, pady=80)
         self.username = StringVar()
@@ -52,7 +53,7 @@ class LogInFrame:
 
 
 class MainFrame:
-    def __init__(self, master):
+    def __init__(self, master: Any) -> None:
         self.master = master
         self.frame = Frame(self.master, width=800, height=800, padx=40, pady=40)
         self.frame.grid()
@@ -123,7 +124,7 @@ class MainFrame:
 
 
 class PopUp:
-    def __init__(self, master, message):
+    def __init__(self, master: Any, message: str) -> None:
         self.master = master
         self.window = Toplevel(self.master)
         self.window.title("Error")
@@ -147,7 +148,7 @@ class PopUp:
 
 
 class App:
-    def __init__(self, master):
+    def __init__(self, master: Any) -> None:
         self.master = master
         self.master.title("Email Client")
         LogInFrame(self.master)
