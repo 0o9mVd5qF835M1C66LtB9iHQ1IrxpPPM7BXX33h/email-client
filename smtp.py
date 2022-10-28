@@ -54,9 +54,13 @@ class Server(SMTP):
         
         # We need to send the mail here...
         if self.connected:
-            self.sendmail(from_address, to_address, message.as_string())
+            rejections = self.sendmail(from_address, to_address, message.as_string())
             self.quit()
             self.connected = False
+            # Sendmail returns a dictionary of rejected addresses
+            if rejections:
+                return False
+            
             return True
         return False
 
