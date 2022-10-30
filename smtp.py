@@ -1,4 +1,3 @@
-import sys
 import re
 from smtplib import SMTP
 from cryptography.fernet import Fernet
@@ -16,13 +15,6 @@ PORT = 587
 SMTP_SERVER = CONFIG["SMTP_SERVER"]
 IMAP_SERVER = CONFIG["IMAP_SERVER"]
 IMAP_PORT = CONFIG["IMAP_PORT"]
-
-
-class Email:
-    """
-    Need to come back to this
-    """
-    ...
 
 
 class Server(SMTP):
@@ -98,28 +90,6 @@ class User:
         message["Subject"] = subject
         message.attach(MIMEText(body, "plain"))
         return message
-        
-    
-def main():
-    if len(sys.argv) != 2:
-        sys.exit("Usage: python3 smtp.py recieving_address")
-
-    to_addr = sys.argv[1]
-
-    if not Server.validate_email(to_addr):
-        sys.exit("Invalid email")
-
-    password = get_password("credentials.txt", KEY)
-
-    user = User(FROM_ADDR, password)
-    server = Server(SMTP_SERVER, PORT)
-    server.make_connection(user)
-
-    subject = input("Subject: ")
-    body = input("Body: ")
-
-    message = user.construct_email(to_addr, body, subject)
-    server.send_email(user.email, to_addr, message)
 
 
 def get_password(file: str, key: str) -> str:
@@ -132,7 +102,3 @@ def get_password(file: str, key: str) -> str:
     fernet = Fernet(key.encode())
     password = fernet.decrypt(password.encode()).decode("utf-8")
     return password
-
-
-if __name__ == "__main__":
-    main()

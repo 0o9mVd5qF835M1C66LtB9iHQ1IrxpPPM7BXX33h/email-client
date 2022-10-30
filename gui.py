@@ -255,6 +255,5 @@ if __name__ == "__main__":
     root = Tk()
     root.title("Email Client")
     root.resizable(False, False)
-    # App(root)
-    ComposeEmailFrame(root)
+    App(root)
     root.mainloop()
