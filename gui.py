@@ -95,9 +95,8 @@ class ComposeEmailFrame:
     def send_email(self):
         to_addr = self.to_address.get()
         subject = self.subject.get()
-        body = self.body.get()
-
-        if "" in (to_addr, body):
+        body = self.body_text.get(1.0, END)
+        if not to_addr or not subject or not body:
             PopUp(self.master, "Please fill out all fields")
             return
 
@@ -256,5 +255,6 @@ if __name__ == "__main__":
     root = Tk()
     root.title("Email Client")
     root.resizable(False, False)
-    App(root)
+    # App(root)
+    ComposeEmailFrame(root)
     root.mainloop()
