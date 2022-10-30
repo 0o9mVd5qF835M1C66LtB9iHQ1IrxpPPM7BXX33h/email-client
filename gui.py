@@ -188,7 +188,7 @@ class MailReadingFrame:
 
 
 class EmailFrame:
-    def __init__(self, master: Any, email) -> None:
+    def __init__(self, master: Any, email: dict) -> None:
         self.master = master
         self.frame = Frame(self.master, width=800, height=800, padx=40, pady=40)
         self.frame.grid()

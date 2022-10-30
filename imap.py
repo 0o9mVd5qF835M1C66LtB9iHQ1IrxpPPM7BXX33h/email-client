@@ -1,5 +1,6 @@
 from imaplib import IMAP4_SSL
 import email
+from smtp import User
 
 
 # TODO: Figure out how to deal with files
